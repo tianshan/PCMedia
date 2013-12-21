@@ -1,3 +1,5 @@
-use phone to control windows, just a attemp
+This is an attemp of use android phone to control windows.
 
-use udp as control info send, in windows use mfc implement a tray progam
+use udp as control info send, in windows use mfc implement a tray progam.
+
+It can control keyboard(use input method or pre define key), volume and a simulate touchpad.
