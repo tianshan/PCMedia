@@ -1,0 +1,12 @@
+package com.mmclub.pcmedia;
+
+public class KeyCode {
+	static String enter 		= "2";
+	static String up 			= "3";
+	static String down 			= "4";
+	static String left 			= "5";
+	static String right			= "6";
+	static String volume_up		= "7";
+	static String volume_down	= "8";
+	static String volume_mute	= "9";
+}

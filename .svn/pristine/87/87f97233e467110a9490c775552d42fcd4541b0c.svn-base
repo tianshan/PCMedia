@@ -1,0 +1,198 @@
+package com.mmclub.pcmedia;
+
+import java.io.IOException;
+
+import com.mmclub.common.Preferences;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class PCmediaActivity extends Activity {
+    /** Called when the activity is first created. */
+	private Button m_button;
+	private Button m_button_space;
+	private Button m_button_enter;
+	private Button m_button_up;
+	private Button m_button_down;
+	private Button m_button_left;
+	private Button m_button_right;
+	private Button m_button_connect;
+	
+	private ImageButton m_button_volumeUp;
+	private ImageButton m_button_volumeDown;
+	private ImageButton m_button_volumeMute;
+	
+	private EditText m_edittext;
+	private TextView m_textview;
+	
+	private TCPSocket tcpcon;
+	private UDPSocket udpcon;
+	
+	private Button m_button_test;
+	
+	private Toast toast;
+	
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+        
+        m_button = (Button)findViewById(R.id.button1);
+        m_button_space = (Button)findViewById(R.id.button_space);
+        m_button_enter = (Button)findViewById(R.id.button_enter);
+        
+        m_edittext = (EditText)findViewById(R.id.editText1);
+        m_textview = (TextView)findViewById(R.id.textview);
+        
+        
+        m_button_up = (Button)findViewById(R.id.button_up);
+        m_button_down = (Button)findViewById(R.id.button_down);
+        m_button_left = (Button)findViewById(R.id.button_left);
+        m_button_right = (Button)findViewById(R.id.button_right);
+        
+        m_button_test = (Button)findViewById(R.id.button_test);
+        m_button_connect = (Button)findViewById(R.id.button_connect);
+        
+        m_button_volumeUp = (ImageButton)findViewById(R.id.imageButton_up);
+        m_button_volumeDown = (ImageButton)findViewById(R.id.imageButton_down);
+        m_button_volumeMute = (ImageButton)findViewById(R.id.imageButton_mute);
+        
+        toast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
+        
+        // 获得默认ip
+        getIP();
+        
+        m_button_connect.setOnClickListener(new Button.OnClickListener(){
+        	public void onClick(View v) {
+        		createUDPSocket();
+        	}
+        });
+        
+        m_button.setOnClickListener(new Button.OnClickListener(){
+        	public void onClick(View v){
+        		SendMsg("00"+"0");
+        	}
+        });
+        
+        m_button_space.setOnClickListener(new Button.OnClickListener(){
+        	public void onClick(View v){
+        		SendMsg("00"+"1");
+        	}
+        });
+        
+        m_button_up.setOnClickListener(new Button.OnClickListener(){
+        	public void onClick(View v){
+        		SendMsg("00"+KeyCode.up);
+        	}
+        });
+        
+        m_button_down.setOnClickListener(new Button.OnClickListener(){
+        	public void onClick(View v){
+        		SendMsg("00"+KeyCode.down);
+        	}
+        });
+        
+        m_button_left.setOnClickListener(new Button.OnClickListener(){
+        	public void onClick(View v){
+        		SendMsg("00"+KeyCode.left);
+        	}
+        });
+        
+        m_button_right.setOnClickListener(new Button.OnClickListener(){
+        	public void onClick(View v){
+        		SendMsg("00"+KeyCode.right);
+        	}
+        });
+        
+        m_button_enter.setOnClickListener(new Button.OnClickListener(){
+        	public void onClick(View v){
+        		SendMsg("00"+KeyCode.enter);
+        	}
+        });
+        
+        m_button_test.setOnClickListener(new Button.OnClickListener(){
+        	public void onClick(View v){
+        		char msg = 0x71;
+        		SendMsg("00"+String.valueOf(msg));
+        	}
+        });
+        
+        m_button_volumeUp.setOnClickListener(new Button.OnClickListener(){
+        	public void onClick(View v){
+        		SendMsg("01"+KeyCode.volume_up);
+        	}
+        });
+        
+        m_button_volumeDown.setOnClickListener(new Button.OnClickListener(){
+        	public void onClick(View v){
+        		SendMsg("01"+KeyCode.volume_down);
+        	}
+        });
+        
+        m_button_volumeMute.setOnClickListener(new Button.OnClickListener(){
+        	public void onClick(View v){
+        		SendMsg("01"+KeyCode.volume_mute);
+        	}
+        });
+        
+    }
+    
+    private void getIP() {
+    	String ip = Preferences.getPreferencesString(getApplicationContext(), "ip");
+    	if (ip == null) ip = "0.0.0.0";
+    	m_edittext.setText(ip);
+    }
+    
+    private void setIP(String ip) {
+    	Preferences.setPreferencesString(getApplicationContext(), "ip", ip);
+    }
+    
+    public void createUDPSocket() {
+    	String str_ip = m_edittext.getText().toString();
+    	// 保存当前ip，供下次使用
+    	setIP(str_ip);
+		m_textview.setText("当前连接："+str_ip);
+		
+		// if (udpcon != null)
+			// udpcon.closeSocket();
+		
+		try {
+			udpcon = new UDPSocket(str_ip);
+			showToast("连接成功");
+		} catch (IOException e) {
+			e.printStackTrace();
+			showToast("连接失败");
+		}
+    }
+    
+    public void showToast(String msg) {
+    	toast.setText(msg);
+    	toast.show();
+    }
+    
+    public void SendMsg(String msg) {
+    	if (udpcon != null) {
+    		if ( !udpcon.Send(msg) ) Log.i("tag", "error");
+    	}
+    	else
+    		showToast("还没有连接");
+    }
+    
+    @Override
+    public void onPause(){
+    	super.onPause();
+    	Log.i("tag", "pause");
+    	if (udpcon != null) {
+    		udpcon.closeSocket();
+    	}
+    }
+    
+}
+

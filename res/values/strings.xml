@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, PCmediaActivity!</string>
+    <string name="app_name">PCmedia</string>
+    <string name="ip_hint">请输入笔记本IP</string>
+    <string name="connect">连接</string>
+
+</resources>
