@@ -1,5 +1,3 @@
-This is an attemp of use android phone to control windows.
-
-use udp as control info send, in windows use mfc implement a tray progam.
-
-It can control keyboard(use input method or pre define key), volume and a simulate touchpad.
+用Andoird控制Windows。通过wifi连接，可以实时响应，可以用作ppt遥控器等。
+实现了方向键，键盘（自定义或者调输入法），音量调整，模拟的触控板。
+Windows端用mfc写的托盘程序。
